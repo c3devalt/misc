@@ -19,27 +19,45 @@ class VietlottGenerator
 
   def print
     tally = generate
-    f = tally.first(6)
-    l = tally.last(6)
-    first_six = f.first(6).map(&:first).sort.join(' ')
-    last_six = l.last(6).map(&:first).sort.join(' ')
-    mix_six = (f + l).map(&:first).sample(6).sort.join(' ')
+    only_nums = tally.map(&:first)
+    f_six = first_six(only_nums)
+    l_six = last_six(only_nums)
+    m_six = mid_six(only_nums)
+    mix = mix_six(f_six, l_six, m_six)
+    print_ticket(f_six, m_six, l_six, mix)
+  end
 
-    puts 'First 6'
-    puts first_six
-    puts 'Last 6'
-    puts last_six
-    puts 'Mix 6'
-    puts mix_six
-    print_ticket(first_six, last_six, mix_six)
+  def first_six(nums)
+    nums.first(6).sort
+  end
+
+  def last_six(nums)
+    nums.last(6).sort
+  end
+
+  def mid_six(nums)
+    nums[(@type / 2 - 3)..(@type / 2 + 2)].sort
+  end
+
+  def mix_six(f_six, l_six, m_six)
+    (f_six + l_six + m_six).sample(6).sort
   end
 
   private
 
-  def print_ticket(first, last, mix)
+  def print_ticket(first, mid, last, mix)
+    print_single(first, 'first')
+    print_single(mid, 'mid')
+    print_single(last, 'last')
+    print_single(mix, 'mix')
     prefix = type == MEGA ? '645 K1' : '655 K1'
     puts '*' * type
-    puts "#{prefix} S #{[first, last, mix].join(' S ')}"
+    ticket_strings = [first, mid, last, mix].map { |t| t.join(' ') }
+    puts "#{prefix} S #{ticket_strings.join(' S ')}"
+  end
+
+  def print_single(nums, name)
+    puts "#{name.capitalize} 6: #{nums.join(' ')}"
   end
 
   def format(ticket)
