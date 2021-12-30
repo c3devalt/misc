@@ -6,7 +6,6 @@ class VietlottGenerator
   NUMBER = 6
 
   TIMES = 10e7.to_i
-
   def initialize(ticket_type)
     case ticket_type
     when MEGA
@@ -20,18 +19,28 @@ class VietlottGenerator
 
   def print
     tally = generate
-    first_six = tally.first(6)
-    last_six = tally.last(6)
+    f = tally.first(6)
+    l = tally.last(6)
+    first_six = f.first(6).map(&:first).sort.join(' ')
+    last_six = l.last(6).map(&:first).sort.join(' ')
+    mix_six = (f + l).map(&:first).sample(6).sort.join(' ')
 
     puts 'First 6'
-    format(first_six.map(&:first).sort.join(', '))
+    puts first_six
     puts 'Last 6'
-    format(last_six.map(&:first).sort.join(', '))
+    puts last_six
     puts 'Mix 6'
-    format((last_six + first_six).sample(6).map(&:first).sort.join(', '))
+    puts mix_six
+    print_ticket(first_six, last_six, mix_six)
   end
 
   private
+
+  def print_ticket(first, last, mix)
+    prefix = type == MEGA ? '645 K1' : '655 K1'
+    puts '*' * type
+    puts "#{prefix} S #{[first, last, mix].join(' S ')}"
+  end
 
   def format(ticket)
     puts "[#{ticket}]"
